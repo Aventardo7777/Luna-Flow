@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>月韵 · 女性周期管家</title>
+    <!-- 使用优雅字体 & 图标库 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ========== 全局重置 & 基础 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(145deg, #fce4ec 0%, #f8e8f0 40%, #f3e5f5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* ========== 主容器 ========== */
+        .app-container {
+            max-width: 480px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 48px;
+            box-shadow: 0 30px 60px rgba(180, 100, 130, 0.20), 0 10px 30px rgba(180, 100, 130, 0.10);
+            padding: 24px 20px 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* ========== 顶部 ========== */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(232, 121, 138, 0.15);
+        }
+
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #4A2C3A;
+            letter-spacing: 0.5px;
+        }
+        .app-title .icon {
+            font-size: 26px;
+        }
+        .app-title .sub {
+            font-weight: 400;
+            font-size: 14px;
+            color: #b07a9a;
+            letter-spacing: 1px;
+            margin-left: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .header-actions button {
+            background: rgba(232, 121, 138, 0.12);
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            color: #7a4d6a;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-actions button:hover {
+            background: rgba(232, 121, 138, 0.25);
+            transform: scale(1.05);
+        }
+
+        /* ========== 状态卡片 ========== */
+        .status-card {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8e8f0 100%);
+            border-radius: 32px;
+            padding: 24px 22px 22px;
+            margin: 18px 0 16px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 8px 20px rgba(200, 130, 160, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+        .status-card::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(232, 121, 138, 0.10) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .status-phase {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .phase-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #7a4d6a;
+            letter-spacing: 0.3px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 4px 16px;
+            border-radius: 30px;
+            backdrop-filter: blur(4px);
+        }
+        .phase-day {
+            font-size: 14px;
+            font-weight: 500;
+            color: #a06a8a;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 4px 14px;
+            border-radius: 30px;
+        }
+
+        .status-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 8px 0 12px;
+        }
+        .status-icon {
+            font-size: 44px;
+            line-height: 1;
+            filter: drop-shadow(0 2px 8px rgba(232, 121, 138, 0.2));
+        }
+        .status-info {
+            flex: 1;
+        }
+        .status-info .title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #3D2C3A;
+            margin-bottom: 2px;
+        }
+        .status-info .desc {
+            font-size: 14px;
+            color: #7a5a6a;
+            font-weight: 500;
+        }
+
+        .status-predictions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(232, 121, 138, 0.15);
+        }
+        .prediction-item {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+            border-radius: 18px;
+            padding: 10px 14px;
+            text-align: center;
+        }
+        .prediction-item .label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #b07a9a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .prediction-item .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #3D2C3A;
+            margin-top: 2px;
+        }
+        .prediction-item .value small {
+            font-weight: 400;
+            font-size: 12px;
+            color: #a06a8a;
+        }
+
+        /* ========== 操作按钮组 ========== */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 6px 0 16px;
+        }
+        .action-btn {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 24px;
+            padding: 12px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.25s ease;
+            box-shadow: 0 2px 8px rgba(180, 100, 130, 0.06);
+            color: #4A2C3A;
+            font-family: inherit;
+        }
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(180, 100, 130, 0.12);
+        }
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+        .action-btn .icon {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .action-btn .label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #7a5a6a;
+        }
+        .action-btn.primary {
+            background: linear-gradient(135deg, #e8798a, #d47a9e);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(232, 121, 138, 0.30);
+        }
+        .action-btn.primary .label {
+            color: #fff;
+        }
+        .action-btn.primary:hover {
+            box-shadow: 0 10px 24px rgba(232, 121, 138, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* ========== 内容区 (动态) ========== */
+        .content-area {
+            min-height: 240px;
+            transition: 0.3s ease;
+        }
+
+        /* ===== 视图: 首页 ===== */
+        .view-home .recent-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #7a5a6a;
+            margin: 6px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .recent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .recent-list::-webkit-scrollbar {
+            width: 3px;
+        }
+        .recent-list::-webkit-scrollbar-thumb {
+            background: #e8b0c8;
+            border-radius: 10px;
+        }
+
+        .record-item {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            border-radius: 18px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            transition: 0.2s;
+        }
+        .record-item:hover {
+            background: rgba(255, 255, 255, 0.85);
+        }
+        .record-item .left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .record-item .date {
+            font-size: 15px;
+            font-weight: 600;
+            color: #3D2C3A;
+        }
+        .record-item .meta {
+            font-size: 12px;
+            color: #a06a8a;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .record-item .meta .tag {
+            background: rgba(232, 121, 138, 0.12);
+            padding: 1px 10px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .record-item .badge {
+            font-size: 22px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 30px 10px;
+            color: #b07a9a;
+        }
+        .empty-state .icon {
+            font-size: 48px;
+            opacity: 0.5;
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* ===== 视图: 记录 ===== */
+        .view-log {
+            padding: 4px 0;
+        }
+        .view-log .form-group {
+            margin-bottom: 18px;
+        }
+        .view-log .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #7a5a6a;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+        .view-log .form-group input[type="date"] {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(232, 121, 138, 0.20);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            font-family: inherit;
+            font-size: 16px;
+            color: #3D2C3A;
+            outline: none;
+            transition: 0.2s;
+        }
+        .view-log .form-group input[type="date"]:focus {
+            border-color: #e8798a;
+            box-shadow: 0 0 0 4px rgba(232, 121, 138, 0.10);
+        }
+
+        .symptom-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .symptom-tag {
+            padding: 8px 18px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(232, 121, 138, 0.15);
+            font-size: 13px;
+            font-weight: 500;
+            color: #5a3a4a;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            user-select: none;
+        }
+        .symptom-tag:hover {
+            background: rgba(232, 121, 138, 0.08);
+        }
+        .symptom-tag.active {
+            background: #e8798a;
+            color: #fff;
+            border-color: #e8798a;
+            box-shadow: 0 4px 12px rgba(232, 121, 138, 0.25);
+        }
+
+        .flow-options {
+            display: flex;
+            gap: 10px;
+        }
+        .flow-option {
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(232, 121, 138, 0.15);
+            font-size: 13px;
+            font-weight: 500;
+            color: #5a3a4a;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            flex: 1;
+            text-align: center;
+        }
+        .flow-option:hover {
+            background: rgba(232, 121, 138, 0.08);
+        }
+        .flow-option.active {
+            background: #d4a5c4;
+            color: #fff;
+            border-color: #d4a5c4;
+            box-shadow: 0 4px 12px rgba(212, 165, 196, 0.25);
+        }
+
+        .mood-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .mood-option {
+            padding: 8px 16px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(232, 121, 138, 0.15);
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+        .mood-option:hover {
+            transform: scale(1.08);
+            background: rgba(232, 121, 138, 0.08);
+        }
+        .mood-option.active {
+            background: #f8e8f0;
+            border-color: #e8798a;
+            box-shadow: 0 0 0 3px rgba(232, 121, 138, 0.15);
+            transform: scale(1.05);
+        }
+        .mood-option .mood-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #7a5a6a;
+            display: block;
+            text-align: center;
+            margin-top: 2px;
+        }
+
+        .view-log .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(232, 121, 138, 0.20);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            font-family: inherit;
+            font-size: 14px;
+            color: #3D2C3A;
+            outline: none;
+            resize: vertical;
+            min-height: 70px;
+            transition: 0.2s;
+        }
+        .view-log .form-group textarea:focus {
+            border-color: #e8798a;
+            box-shadow: 0 0 0 4px rgba(232, 121, 138, 0.10);
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #e8798a, #d47a9e);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 6px 20px rgba(232, 121, 138, 0.30);
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(232, 121, 138, 0.35);
+        }
+        .btn-save:active {
+            transform: scale(0.97);
+        }
+
+        /* ===== 视图: 统计 ===== */
+        .view-stats .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0 16px;
+        }
+        .stats-grid .stat-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 14px 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .stats-grid .stat-card .num {
+            font-size: 26px;
+            font-weight: 700;
+            color: #3D2C3A;
+            line-height: 1.2;
+        }
+        .stats-grid .stat-card .num small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #a06a8a;
+        }
+        .stats-grid .stat-card .lbl {
+            font-size: 11px;
+            font-weight: 600;
+            color: #b07a9a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .view-stats .chart-placeholder {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            padding: 20px 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            margin-top: 6px;
+        }
+        .view-stats .chart-placeholder .emoji-big {
+            font-size: 36px;
+            margin-bottom: 6px;
+        }
+        .view-stats .chart-placeholder p {
+            font-size: 14px;
+            color: #7a5a6a;
+            font-weight: 500;
+        }
+
+        /* ===== 视图: 建议 ===== */
+        .view-advice .advice-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            padding: 22px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            margin: 6px 0 12px;
+        }
+        .view-advice .advice-card .advice-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #3D2C3A;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .view-advice .advice-card .advice-body {
+            font-size: 14px;
+            color: #5a3a4a;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+        .view-advice .advice-card .advice-body ul {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0;
+        }
+        .view-advice .advice-card .advice-body ul li {
+            padding: 4px 0 4px 24px;
+            position: relative;
+        }
+        .view-advice .advice-card .advice-body ul li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: #e8798a;
+            font-size: 14px;
+        }
+        .advice-tip {
+            background: rgba(232, 121, 138, 0.06);
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-top: 10px;
+            border-left: 3px solid #e8798a;
+            font-size: 13px;
+            color: #5a3a4a;
+            font-weight: 500;
+        }
+
+        /* ========== 底部导航 ========== */
+        .bottom-nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-top: 20px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(232, 121, 138, 0.12);
+        }
+        .nav-item {
+            background: transparent;
+            border: none;
+            padding: 8px 4px;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            color: #b07a9a;
+            cursor: pointer;
+            transition: 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .nav-item .icon {
+            font-size: 20px;
+            transition: 0.2s;
+        }
+        .nav-item:hover {
+            color: #7a4d6a;
+            background: rgba(232, 121, 138, 0.06);
+        }
+        .nav-item.active {
+            color: #e8798a;
+            background: rgba(232, 121, 138, 0.10);
+        }
+        .nav-item.active .icon {
+            transform: scale(1.1);
+        }
+
+        /* ========== 工具类 ========== */
+        .hidden {
+            display: none !important;
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .fade-in {
+            animation: fadeIn 0.35s ease forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== 响应式微调 ========== */
+        @media (max-width: 420px) {
+            .app-container {
+                padding: 16px 14px 14px;
+                border-radius: 32px;
+            }
+            .app-title {
+                font-size: 18px;
+            }
+            .status-card {
+                padding: 18px 16px;
+            }
+            .status-main .status-icon {
+                font-size: 34px;
+            }
+            .action-grid {
+                gap: 6px;
+            }
+            .action-btn {
+                padding: 10px 4px;
+            }
+            .action-btn .icon {
+                font-size: 18px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 6px;
+            }
+            .stats-grid .stat-card .num {
+                font-size: 20px;
+            }
+            .symptom-tag {
+                padding: 6px 14px;
+                font-size: 12px;
+            }
+            .flow-option {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="app">
+        <!-- ===== 顶部 ===== -->
+        <header class="app-header">
+            <div class="app-title">
+                <span class="icon">🌸</span>
+                月韵
+                <span class="sub">· 周期管家</span>
+            </div>
+            <div class="header-actions">
+                <button id="btnClearData" title="清除所有数据" aria-label="清除数据">
+                    <i class="fas fa-trash-alt" style="font-size:15px;"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- ===== 状态卡片 ===== -->
+        <div class="status-card" id="statusCard">
+            <div class="status-phase">
+                <span class="phase-label" id="phaseLabel">🌸 卵泡期</span>
+                <span class="phase-day" id="phaseDay">第 7 天</span>
+            </div>
+            <div class="status-main">
+                <span class="status-icon" id="statusIcon">🌱</span>
+                <div class="status-info">
+                    <div class="title" id="statusTitle">身体正在复苏</div>
+                    <div class="desc" id="statusDesc">精力回升 · 创造力旺盛</div>
+                </div>
+            </div>
+            <div class="status-predictions">
+                <div class="prediction-item">
+                    <div class="label">📅 下次月经</div>
+                    <div class="value" id="nextPeriod">--</div>
+                </div>
+                <div class="prediction-item">
+                    <div class="label">🥚 排卵期</div>
+                    <div class="value" id="nextOvulation">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 操作按钮 ===== -->
+        <div class="action-grid">
+            <button class="action-btn primary" id="btnLog">
+                <span class="icon">📝</span>
+                <span class="label">记录经期</span>
+            </button>
+            <button class="action-btn" id="btnHome">
+                <span class="icon">🏠</span>
+                <span class="label">首页</span>
+            </button>
+            <button class="action-btn" id="btnStats">
+                <span class="icon">📊</span>
+                <span class="label">统计</span>
+            </button>
+            <button class="action-btn" id="btnAdvice">
+                <span class="icon">💡</span>
+                <span class="label">建议</span>
+            </button>
+        </div>
+
+        <!-- ===== 内容区 ===== -->
+        <div class="content-area" id="contentArea">
+            <!-- 默认: 首页视图 -->
+            <div id="viewHome" class="view-home fade-in">
+                <div class="recent-title">
+                    <i class="fas fa-clock" style="color:#e8798a;"></i> 最近记录
+                </div>
+                <div class="recent-list" id="recentList">
+                    <div class="empty-state">
+                        <div class="icon">📖</div>
+                        <p>还没有记录，点击「记录经期」开始</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 记录视图 (默认隐藏) -->
+            <div id="viewLog" class="view-log hidden">
+                <div class="form-group">
+                    <label>📅 月经开始日期</label>
+                    <input type="date" id="logDate" />
+                </div>
+                <div class="form-group">
+                    <label>💊 症状 (可多选)</label>
+                    <div class="symptom-tags" id="symptomTags">
+                        <button class="symptom-tag" data-symptom="腹痛">腹痛</button>
+                        <button class="symptom-tag" data-symptom="头痛">头痛</button>
+                        <button class="symptom-tag" data-symptom="疲劳">疲劳</button>
+                        <button class="symptom-tag" data-symptom="情绪波动">情绪波动</button>
+                        <button class="symptom-tag" data-symptom="乳房胀痛">乳房胀痛</button>
+                        <button class="symptom-tag" data-symptom="腰酸">腰酸</button>
+                        <button class="symptom-tag" data-symptom="食欲变化">食欲变化</button>
+                        <button class="symptom-tag" data-symptom="失眠">失眠</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>🌊 流量</label>
+                    <div class="flow-options" id="flowOptions">
+                        <button class="flow-option" data-flow="light">🩸 轻</button>
+                        <button class="flow-option active" data-flow="medium">🩸 中</button>
+                        <button class="flow-option" data-flow="heavy">🩸 重</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>😊 情绪</label>
+                    <div class="mood-options" id="moodOptions">
+                        <button class="mood-option" data-mood="happy">😊 <span class="mood-label">开心</span></button>
+                        <button class="mood-option active" data-mood="normal">😐 <span class="mood-label">平静</span></button>
+                        <button class="mood-option" data-mood="sad">😢 <span class="mood-label">低落</span></button>
+                        <button class="mood-option" data-mood="anxious">😰 <span class="mood-label">焦虑</span></button>
+                        <button class="mood-option" data-mood="irritable">😤 <span class="mood-label">烦躁</span></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>📝 备注 (可选)</label>
+                    <textarea id="logNotes" placeholder="记录一些细节…"></textarea>
+                </div>
+                <button class="btn-save" id="btnSaveLog">💾 保存记录</button>
+            </div>
+
+            <!-- 统计视图 (默认隐藏) -->
+            <div id="viewStats" class="view-stats hidden">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="num" id="statCycles">0</div>
+                        <div class="lbl">周期数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="num" id="statAvg">-- <small>天</small></div>
+                        <div class="lbl">平均周期</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="num" id="statRange">--</div>
+                        <div class="lbl">最短–最长</div>
+                    </div>
+                </div>
+                <div class="chart-placeholder">
+                    <div class="emoji-big">📈</div>
+                    <p>周期趋势将在这里展示</p>
+                    <p style="font-size:12px;color:#b07a9a;margin-top:4px;">记录 3 个周期以上即可生成趋势图</p>
+                </div>
+            </div>
+
+            <!-- 建议视图 (默认隐藏) -->
+            <div id="viewAdvice" class="view-advice hidden">
+                <div class="advice-card" id="adviceCard">
+                    <div class="advice-title">
+                        <span id="adviceEmoji">🌱</span>
+                        <span id="adviceTitle">今日建议</span>
+                    </div>
+                    <div class="advice-body" id="adviceBody">
+                        <p>根据您当前的周期阶段，我们为您准备了以下建议：</p>
+                        <ul id="adviceList">
+                            <li>保持充足的水分摄入</li>
+                            <li>适度运动，如散步或瑜伽</li>
+                            <li>保证 7-8 小时的优质睡眠</li>
+                        </ul>
+                        <div class="advice-tip" id="adviceTip">
+                            💡 倾听身体的声音，给自己多一些温柔。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 底部导航 ===== -->
+        <div class="bottom-nav">
+            <button class="nav-item active" data-view="home">
+                <span class="icon">🏠</span>
+                首页
+            </button>
+            <button class="nav-item" data-view="log">
+                <span class="icon">📝</span>
+                记录
+            </button>
+            <button class="nav-item" data-view="stats">
+                <span class="icon">📊</span>
+                统计
+            </button>
+            <button class="nav-item" data-view="advice">
+                <span class="icon">💡</span>
+                建议
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  🌸  月韵 · 女性周期管家  ——  完整 JavaScript 逻辑
+        // ================================================================
+
+        (function() {
+            'use strict';
+
+            // ---------- 常量 ----------
+            const STORAGE_KEY = 'yueyun_data';
+            const SETTINGS_KEY = 'yueyun_settings';
+
+            // 周期阶段
+            const PHASES = {
+                MENSTRUAL: 'menstrual',
+                FOLLICULAR: 'follicular',
+                OVULATION: 'ovulation',
+                LUTEAL: 'luteal'
+            };
+
+            // 阶段显示信息
+            const PHASE_INFO = {
+                [PHASES.MENSTRUAL]: {
+                    label: '🩸 月经期',
+                    icon: '🩸',
+                    title: '好好休息，温柔待己',
+                    desc: '注意保暖 · 多喝温水',
+                    advice: [
+                        '注意保暖，避免受凉',
+                        '多喝温水或红糖姜茶',
+                        '保证充足睡眠，避免剧烈运动',
+                        '饮食清淡，多吃富含铁质的食物'
+                    ],
+                    tip: '月经期是身体排毒与更新的过程，请给自己更多的关爱与耐心。'
+                },
+                [PHASES.FOLLICULAR]: {
+                    label: '🌱 卵泡期',
+                    icon: '🌱',
+                    title: '身体正在复苏',
+                    desc: '精力回升 · 创造力旺盛',
+                    advice: [
+                        '适当增加运动量，如跑步、瑜伽',
+                        '多吃富含蛋白质和维生素的食物',
+                        '抓住创意高峰期，推进工作计划',
+                        '多与朋友交流，保持心情愉悦'
+                    ],
+                    tip: '卵泡期是能量上升期，你的身体和大脑都处于最佳状态，勇敢去行动吧！'
+                },
+                [PHASES.OVULATION]: {
+                    label: '🥚 排卵期',
+                    icon: '🥚',
+                    title: '魅力与能量峰值',
+                    desc: '活力四射 · 社交力强',
+                    advice: [
+                        '这是运动表现最好的时期，可以尝试高强度训练',
+                        '多吃蔬菜水果，保持饮食均衡',
+                        '注意个人卫生，预防感染',
+                        '利用好社交能量，拓展人际关系'
+                    ],
+                    tip: '排卵期是你最闪耀的时刻，自信绽放，享受生活的美好。'
+                },
+                [PHASES.LUTEAL]: {
+                    label: '🌙 黄体期',
+                    icon: '🌙',
+                    title: '放慢节奏，向内滋养',
+                    desc: '情绪敏感 · 需要呵护',
+                    advice: [
+                        '减少咖啡因和盐分摄入，缓解水肿',
+                        '进行舒缓运动，如散步、冥想',
+                        '多与亲近的人倾诉，释放情绪',
+                        '保证充足睡眠，避免熬夜'
+                    ],
+                    tip: '黄体期身体在为下一次周期做准备，请倾听内心的声音，给自己温柔的陪伴。'
+                }
+            };
+
+            // 默认设置
+            const DEFAULT_SETTINGS = {
+                cycleLength: 28,
+                periodLength: 5
+            };
+
+            // ---------- 状态 ----------
+            let data = []; // 记录数组 [{ id, date, symptoms, flow, mood, notes }]
+            let settings = { ...DEFAULT_SETTINGS };
+
+            // 当前选中的症状、流量、情绪 (用于记录表单)
+            let selectedSymptoms = [];
+            let selectedFlow = 'medium';
+            let selectedMood = 'normal';
+
+            // 当前显示的视图
+            let currentView = 'home';
+
+            // ---------- DOM 引用 ----------
+            const $ = (sel) => document.querySelector(sel);
+            const $$ = (sel) => document.querySelectorAll(sel);
+
+            const app = $('#app');
+            const viewHome = $('#viewHome');
+            const viewLog = $('#viewLog');
+            const viewStats = $('#viewStats');
+            const viewAdvice = $('#viewAdvice');
+
+            const recentList = $('#recentList');
+            const logDate = $('#logDate');
+            const symptomTags = $('#symptomTags');
+            const flowOptions = $('#flowOptions');
+            const moodOptions = $('#moodOptions');
+            const logNotes = $('#logNotes');
+            const btnSaveLog = $('#btnSaveLog');
+
+            const phaseLabel = $('#phaseLabel');
+            const phaseDay = $('#phaseDay');
+            const statusIcon = $('#statusIcon');
+            const statusTitle = $('#statusTitle');
+            const statusDesc = $('#statusDesc');
+            const nextPeriod = $('#nextPeriod');
+            const nextOvulation = $('#nextOvulation');
+
+            const statCycles = $('#statCycles');
+            const statAvg = $('#statAvg');
+            const statRange = $('#statRange');
+
+            const adviceEmoji = $('#adviceEmoji');
+            const adviceTitle = $('#adviceTitle');
+            const adviceList = $('#adviceList');
+            const adviceTip = $('#adviceTip');
+
+            const navItems = $$('.nav-item');
+            const actionBtns = {
+                home: $('#btnHome'),
+                log: $('#btnLog'),
+                stats: $('#btnStats'),
+                advice: $('#btnAdvice')
+            };
+            const btnClearData = $('#btnClearData');
+
+            // ---------- 工具函数 ----------
+            function formatDate(dateStr) {
+                const d = new Date(dateStr + 'T00:00:00');
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
+
+            function formatDateReadable(dateStr) {
+                const d = new Date(dateStr + 'T00:00:00');
+                return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+            }
+
+            function todayStr() {
+                const d = new Date();
+                return formatDate(d.toISOString().split('T')[0]);
+            }
+
+            function addDays(dateStr, days) {
+                const d = new Date(dateStr + 'T00:00:00');
+                d.setDate(d.getDate() + days);
+                return formatDate(d.toISOString().split('T')[0]);
+            }
+
+            function daysBetween(date1, date2) {
+                const d1 = new Date(date1 + 'T00:00:00');
+                const d2 = new Date(date2 + 'T00:00:00');
+                return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+            }
+
+            function sortByDate(arr, desc = true) {
+                return [...arr].sort((a, b) => {
+                    return desc ? (a.date < b.date ? 1 : -1) : (a.date > b.date ? 1 : -1);
+                });
+            }
+
+            // ---------- 数据持久化 ----------
+            function loadData() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        data = JSON.parse(raw);
+                        // 兼容旧数据: 确保每个记录有 id
+                        data = data.filter(r => r && typeof r === 'object' && r.date);
+                        data = data.map(r => ({
+                            ...r,
+                            id: r.id || Date.now() + Math.random() * 1000 + '_' + r.date
+                        }));
+                    } else {
+                        data = [];
+                    }
+                } catch (_) { data = []; }
+
+                try {
+                    const raw = localStorage.getItem(SETTINGS_KEY);
+                    if (raw) {
+                        const s = JSON.parse(raw);
+                        settings = { ...DEFAULT_SETTINGS, ...s };
+                    }
+                } catch (_) { settings = { ...DEFAULT_SETTINGS }; }
+            }
+
+            function saveData() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+            }
+
+            // ---------- 核心周期计算 ----------
+            function getPeriods(records) {
+                // 返回按日期排序的月经开始日期列表 (去重)
+                const dates = records
+                    .filter(r => r && r.date)
+                    .map(r => r.date)
+                    .filter((d, i, arr) => arr.indexOf(d) === i)
+                    .sort();
+                return dates;
+            }
+
+            function getCycleLengths(records) {
+                const periods = getPeriods(records);
+                if (periods.length < 2) return [];
+                const lengths = [];
+                for (let i = 1; i < periods.length; i++) {
+                    const diff = daysBetween(periods[i - 1], periods[i]);
+                    if (diff > 0 && diff < 60) lengths.push(diff);
+                }
+                return lengths;
+            }
+
+            function getAverageCycle(records) {
+                const lengths = getCycleLengths(records);
+                if (lengths.length === 0) return settings.cycleLength || 28;
+                const sum = lengths.reduce((a, b) => a + b, 0);
+                return Math.round(sum / lengths.length);
+            }
+
+            function getLastPeriodStart(records) {
+                const periods = getPeriods(records);
+                if (periods.length === 0) return null;
+                return periods[periods.length - 1];
+            }
+
+            function getPhase(dateStr, records) {
+                const lastStart = getLastPeriodStart(records);
+                if (!lastStart) return { phase: PHASES.FOLLICULAR, day: 1 };
+
+                const avgCycle = getAverageCycle(records);
+                const dayOffset = daysBetween(lastStart, dateStr);
+                if (dayOffset < 0) return { phase: PHASES.FOLLICULAR, day: 1 };
+
+                // 月经期: 前 settings.periodLength 天 (默认5)
+                const periodLen = settings.periodLength || 5;
+                if (dayOffset < periodLen) {
+                    return { phase: PHASES.MENSTRUAL, day: dayOffset + 1 };
+                }
+
+                // 排卵期: 平均周期前14天左右, 前后2天
+                const ovulationDay = Math.round(avgCycle * 0.5); // 约14天
+                const ovStart = ovulationDay - 2;
+                const ovEnd = ovulationDay + 2;
+                if (dayOffset >= ovStart && dayOffset <= ovEnd) {
+                    return { phase: PHASES.OVULATION, day: dayOffset + 1 };
+                }
+
+                // 黄体期: 排卵期后到下次月经前
+                if (dayOffset > ovEnd && dayOffset < avgCycle) {
+                    return { phase: PHASES.LUTEAL, day: dayOffset + 1 };
+                }
+
+                // 卵泡期: 月经期后到排卵期前
+                if (dayOffset >= periodLen && dayOffset < ovStart) {
+                    return { phase: PHASES.FOLLICULAR, day: dayOffset + 1 };
+                }
+
+                // 默认
+                return { phase: PHASES.FOLLICULAR, day: dayOffset + 1 };
+            }
+
+            function getNextPeriodDate(records) {
+                const lastStart = getLastPeriodStart(records);
+                if (!lastStart) return null;
+                const avgCycle = getAverageCycle(records);
+                return addDays(lastStart, avgCycle);
+            }
+
+            function getOvulationDate(records) {
+                const lastStart = getLastPeriodStart(records);
+                if (!lastStart) return null;
+                const avgCycle = getAverageCycle(records);
+                const ovDay = Math.round(avgCycle * 0.5);
+                return addDays(lastStart, ovDay);
+            }
+
+            function getPhaseInfo(dateStr, records) {
+                const result = getPhase(dateStr, records);
+                const info = PHASE_INFO[result.phase] || PHASE_INFO[PHASES.FOLLICULAR];
+                return {
+                    ...result,
+                    label: info.label,
+                    icon: info.icon,
+                    title: info.title,
+                    desc: info.desc,
+                    advice: info.advice,
+                    tip: info.tip
+                };
+            }
+
+            // ---------- 渲染 UI ----------
+            function renderStatus() {
+                const today = todayStr();
+                const lastStart = getLastPeriodStart(data);
+                const avgCycle = getAverageCycle(data);
+
+                let phaseInfo;
+                if (!lastStart) {
+                    phaseInfo = {
+                        phase: PHASES.FOLLICULAR,
+                        day: 1,
+                        label: '🌱 等待记录',
+                        icon: '🌱',
+                        title: '开始记录你的周期',
+                        desc: '点击「记录经期」添加第一次记录',
+                        advice: ['记录月经开始日，我们会为你智能推算周期'],
+                        tip: '每一次记录，都是对身体更深的了解。'
+                    };
+                } else {
+                    phaseInfo = getPhaseInfo(today, data);
+                }
+
+                phaseLabel.textContent = phaseInfo.label || '🌱 卵泡期';
+                phaseDay.textContent = lastStart ? `第 ${phaseInfo.day} 天` : '—';
+                statusIcon.textContent = phaseInfo.icon || '🌱';
+                statusTitle.textContent = phaseInfo.title || '身体正在复苏';
+                statusDesc.textContent = phaseInfo.desc || '';
+
+                // 预测
+                const nextP = getNextPeriodDate(data);
+                const nextO = getOvulationDate(data);
+                nextPeriod.textContent = nextP ? formatDateReadable(nextP) : '--';
+                nextOvulation.textContent = nextO ? formatDateReadable(nextO) : '--';
+
+                // 更新建议视图 (如果当前在建议页)
+                if (currentView === 'advice') {
+                    renderAdvice(phaseInfo);
+                }
+            }
+
+            function renderRecent() {
+                const sorted = sortByDate(data, true);
+                if (sorted.length === 0) {
+                    recentList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📖</div>
+                            <p>还没有记录，点击「记录经期」开始</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const html = sorted.slice(0, 10).map(r => {
+                    const phase = getPhase(r.date, data);
+                    const phaseLabel = PHASE_INFO[phase.phase]?.label || '🌱 卵泡期';
+                    const flowMap = { light: '轻', medium: '中', heavy: '重' };
+                    const flowLabel = flowMap[r.flow] || '中';
+                    const symptomStr = r.symptoms && r.symptoms.length > 0 ? r.symptoms.join('、') : '无';
+                    return `
+                        <div class="record-item">
+                            <div class="left">
+                                <div class="date">${formatDateReadable(r.date)}</div>
+                                <div class="meta">
+                                    <span>${phaseLabel}</span>
+                                    <span class="tag">🩸 ${flowLabel}</span>
+                                    <span class="tag">${symptomStr}</span>
+                                </div>
+                            </div>
+                            <span class="badge">${r.mood === 'happy' ? '😊' : r.mood === 'sad' ? '😢' : r.mood === 'anxious' ? '😰' : r.mood === 'irritable' ? '😤' : '😐'}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                recentList.innerHTML = html;
+            }
+
+            function renderStats() {
+                const periods = getPeriods(data);
+                const cycles = periods.length;
+                const lengths = getCycleLengths(data);
+
+                statCycles.textContent = cycles;
+
+                if (lengths.length === 0) {
+                    statAvg.textContent = '-- 天';
+                    statRange.textContent = '--';
+                } else {
+                    const sum = lengths.reduce((a, b) => a + b, 0);
+                    const avg = Math.round(sum / lengths.length);
+                    const min = Math.min(...lengths);
+                    const max = Math.max(...lengths);
+                    statAvg.innerHTML = `${avg} <small>天</small>`;
+                    statRange.textContent = `${min}–${max}`;
+                }
+            }
+
+            function renderAdvice(phaseInfo) {
+                const info = phaseInfo || (data.length > 0 ? getPhaseInfo(todayStr(), data) : {
+                    label: '🌱 等待记录',
+                    icon: '🌱',
+                    title: '开始记录你的周期',
+                    desc: '点击「记录经期」添加第一次记录',
+                    advice: ['记录月经开始日，我们会为你智能推算周期'],
+                    tip: '每一次记录，都是对身体更深的了解。'
+                });
+
+                adviceEmoji.textContent = info.icon || '🌱';
+                adviceTitle.textContent = info.title || '今日建议';
+                const listHtml = (info.advice || ['保持健康的生活方式']).map(item =>
+                    `<li>${item}</li>`
+                ).join('');
+                adviceList.innerHTML = listHtml;
+                adviceTip.textContent = '💡 ' + (info.tip || '倾听身体的声音，给自己多一些温柔。');
+            }
+
+            // ---------- 切换视图 ----------
+            function switchView(view) {
+                currentView = view;
+
+                // 隐藏所有视图
+                [viewHome, viewLog, viewStats, viewAdvice].forEach(el => {
+                    el.classList.add('hidden');
+                    el.classList.remove('fade-in');
+                });
+
+                // 显示目标视图
+                let target;
+                if (view === 'home') target = viewHome;
+                else if (view === 'log') target = viewLog;
+                else if (view === 'stats') target = viewStats;
+                else if (view === 'advice') target = viewAdvice;
+                if (target) {
+                    target.classList.remove('hidden');
+                    // 触发 fade-in
+                    void target.offsetWidth;
+                    target.classList.add('fade-in');
+                }
+
+                // 更新底部导航
+                navItems.forEach(item => {
+                    item.classList.toggle('active', item.dataset.view === view);
+                });
+
+                // 渲染对应内容
+                if (view === 'home') {
+                    renderRecent();
+                    renderStatus();
+                } else if (view === 'stats') {
+                    renderStats();
+                } else if (view === 'advice') {
+                    const info = data.length > 0 ? getPhaseInfo(todayStr(), data) : null;
+                    renderAdvice(info);
+                } else if (view === 'log') {
+                    // 设置默认日期为今天
+                    logDate.value = todayStr();
+                    // 重置表单状态
+                    selectedSymptoms = [];
+                    selectedFlow = 'medium';
+                    selectedMood = 'normal';
+                    updateSymptomUI();
+                    updateFlowUI();
+                    updateMoodUI();
+                    logNotes.value = '';
+                }
+            }
+
+            // ---------- 表单 UI 更新 ----------
+            function updateSymptomUI() {
+                const btns = symptomTags.querySelectorAll('.symptom-tag');
+                btns.forEach(btn => {
+                    const sym = btn.dataset.symptom;
+                    btn.classList.toggle('active', selectedSymptoms.includes(sym));
+                });
+            }
+
+            function updateFlowUI() {
+                const btns = flowOptions.querySelectorAll('.flow-option');
+                btns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.flow === selectedFlow);
+                });
+            }
+
+            function updateMoodUI() {
+                const btns = moodOptions.querySelectorAll('.mood-option');
+                btns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.mood === selectedMood);
+                });
+            }
+
+            // ---------- 保存记录 ----------
+            function saveRecord() {
+                const date = logDate.value;
+                if (!date) {
+                    alert('请选择月经开始日期 📅');
+                    return;
+                }
+
+                // 检查是否已存在同一天记录 (防止重复)
+                const existing = data.find(r => r.date === date);
+                if (existing) {
+                    if (!confirm(`已存在 ${formatDateReadable(date)} 的记录，是否覆盖？`)) {
+                        return;
+                    }
+                    // 删除旧记录
+                    data = data.filter(r => r.date !== date);
+                }
+
+                const record = {
+                    id: Date.now() + '_' + date,
+                    date: date,
+                    symptoms: [...selectedSymptoms],
+                    flow: selectedFlow,
+                    mood: selectedMood,
+                    notes: logNotes.value.trim() || '',
+                };
+
+                data.push(record);
+                saveData();
+
+                // 切换到首页
+                switchView('home');
+                renderStatus();
+                renderRecent();
+
+                // 显示成功提示
+                showToast('✅ 记录已保存！');
+            }
+
+            // ---------- 简易 Toast ----------
+            function showToast(msg) {
+                const old = document.querySelector('.toast-msg');
+                if (old) old.remove();
+
+                const div = document.createElement('div');
+                div.className = 'toast-msg';
+                div.textContent = msg;
+                Object.assign(div.style, {
+                    position: 'fixed',
+                    bottom: '30px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'rgba(60, 40, 50, 0.88)',
+                    backdropFilter: 'blur(12px)',
+                    color: '#fff',
+                    padding: '14px 28px',
+                    borderRadius: '40px',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    fontFamily: 'Quicksand, sans-serif',
+                    boxShadow: '0 12px 32px rgba(0,0,0,0.15)',
+                    zIndex: '9999',
+                    letterSpacing: '0.3px',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    animation: 'fadeIn 0.35s ease',
+                    maxWidth: '90%',
+                    textAlign: 'center'
+                });
+                document.body.appendChild(div);
+
+                setTimeout(() => {
+                    div.style.opacity = '0';
+                    div.style.transition = 'opacity 0.4s ease';
+                    setTimeout(() => div.remove(), 400);
+                }, 2200);
+            }
+
+            // ---------- 清除数据 ----------
+            function clearAllData() {
+                if (data.length === 0) {
+                    showToast('📭 暂无数据可清除');
+                    return;
+                }
+                if (!confirm('⚠️ 确定要清除所有数据吗？此操作不可撤销！')) return;
+                data = [];
+                saveData();
+                switchView('home');
+                renderStatus();
+                renderRecent();
+                showToast('🗑️ 数据已清除');
+            }
+
+            // ---------- 事件绑定 ----------
+            function initEvents() {
+                // 底部导航
+                navItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const view = this.dataset.view;
+                        if (view === 'log') {
+                            // 切换到记录视图时自动填充日期
+                            switchView('log');
+                        } else {
+                            switchView(view);
+                        }
+                    });
+                });
+
+                // 顶部操作按钮
+                actionBtns.home.addEventListener('click', () => switchView('home'));
+                actionBtns.log.addEventListener('click', () => switchView('log'));
+                actionBtns.stats.addEventListener('click', () => switchView('stats'));
+                actionBtns.advice.addEventListener('click', () => switchView('advice'));
+
+                // 症状标签
+                symptomTags.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.symptom-tag');
+                    if (!btn) return;
+                    const sym = btn.dataset.symptom;
+                    const idx = selectedSymptoms.indexOf(sym);
+                    if (idx > -1) {
+                        selectedSymptoms.splice(idx, 1);
+                    } else {
+                        selectedSymptoms.push(sym);
+                    }
+                    updateSymptomUI();
+                });
+
+                // 流量选项
+                flowOptions.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.flow-option');
+                    if (!btn) return;
+                    selectedFlow = btn.dataset.flow;
+                    updateFlowUI();
+                });
+
+                // 情绪选项
+                moodOptions.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.mood-option');
+                    if (!btn) return;
+                    selectedMood = btn.dataset.mood;
+                    updateMoodUI();
+                });
+
+                // 保存记录
+                btnSaveLog.addEventListener('click', saveRecord);
+
+                // 清除数据
+                btnClearData.addEventListener('click', clearAllData);
+
+                // 键盘快捷键: Enter 在日期输入框触发保存
+                logDate.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') saveRecord();
+                });
+            }
+
+            // ---------- 初始化 ----------
+            function init() {
+                loadData();
+                // 如果没有数据，添加一条示例数据（为了展示效果，可选）
+                if (data.length === 0) {
+                    // 添加最近3个月的示例数据，方便展示
+                    const today = new Date();
+                    for (let i = 3; i >= 0; i--) {
+                        const d = new Date(today);
+                        d.setDate(d.getDate() - (i * 28 + 5));
+                        const dateStr = formatDate(d.toISOString().split('T')[0]);
+                        // 避免重复
+                        if (!data.find(r => r.date === dateStr)) {
+                            data.push({
+                                id: 'demo_' + dateStr,
+                                date: dateStr,
+                                symptoms: i % 2 === 0 ? ['腹痛', '疲劳'] : ['头痛', '情绪波动'],
+                                flow: i % 3 === 0 ? 'light' : i % 3 === 1 ? 'medium' : 'heavy',
+                                mood: i % 4 === 0 ? 'happy' : i % 4 === 1 ? 'normal' : i % 4 === 2 ? 'sad' : 'irritable',
+                                notes: ''
+                            });
+                        }
+                    }
+                    // 确保数据按日期排序，且无重复
+                    const seen = new Set();
+                    data = data.filter(r => {
+                        if (seen.has(r.date)) return false;
+                        seen.add(r.date);
+                        return true;
+                    });
+                    saveData();
+                }
+
+                // 按日期排序，确保最新记录在最后
+                data = data.sort((a, b) => a.date.localeCompare(b.date));
+
+                // 渲染
+                switchView('home');
+                renderStatus();
+                renderRecent();
+
+                // 绑定事件
+                initEvents();
+
+                // 每60秒自动刷新状态 (如果页面在后台，不会频繁刷新)
+                setInterval(() => {
+                    if (currentView === 'home' || currentView === 'advice') {
+                        renderStatus();
+                        if (currentView === 'home') renderRecent();
+                        if (currentView === 'advice') {
+                            const info = data.length > 0 ? getPhaseInfo(todayStr(), data) : null;
+                            renderAdvice(info);
+                        }
+                    }
+                    if (currentView === 'stats') renderStats();
+                }, 60000);
+
+                console.log('🌸 月韵 · 女性周期管家 已加载');
+                console.log(`📊 共 ${data.length} 条记录`);
+            }
+
+            // 页面加载完成后初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+        })();
+    </script>
+
+</body>
+</html>
